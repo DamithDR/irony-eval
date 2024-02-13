@@ -1,17 +1,10 @@
 import argparse
-import sys
 
-import pandas as pd
 import torch
-# from langchain import HuggingFacePipeline
-# from langchain.llms import HuggingFacePipeline
-# from langchain.llms.huggingface_pipeline import HuggingFacePipeline
-from langchain_community.llms import HuggingFacePipeline
-
-from langchain import PromptTemplate, LLMChain
-from transformers import AutoTokenizer, pipeline, AutoModelForCausalLM
-
 from datasets import load_dataset
+from langchain import LLMChain
+from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
+from transformers import AutoTokenizer
 
 from data.prompts.single_prompts import prompt_templates as templates
 
@@ -22,7 +15,7 @@ def get_result(llm, alias, attribute_value, message, reply):
     else:
         prompt = templates[alias]
         llm_chain = LLMChain(prompt=prompt, llm=llm)
-        response = llm_chain.run({alias: attribute_value, 'message': message, 'reply': reply})
+        response = llm_chain.invoke({alias: attribute_value, 'message': message, 'reply': reply})
         if str(response).lower() == 'yes':
             return 'iro'
         else:
