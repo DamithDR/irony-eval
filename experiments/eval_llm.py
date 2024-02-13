@@ -37,7 +37,7 @@ def run(args):
         do_sample=True,
         top_k=10,
         num_return_sequences=10,
-        eos_token_id=tokenizer.eos_token_id
+        eos_token_id=tokenizer.eos_token_id,
     )
 
     llm = HuggingFacePipeline(pipeline=pipeline, model_kwargs={'temperature': 1, 'do_sample': True})
@@ -78,6 +78,9 @@ def run(args):
 
 
 if __name__ == '__main__':
+    #todo remove once tested
+    import os
+    os.environ['HF_HOME'] = '../cache/'
     parser = argparse.ArgumentParser(description='''evaluate llms''')
     parser.add_argument('--model_name', type=str, required=True, help='model_name')
 
