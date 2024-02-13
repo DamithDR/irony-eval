@@ -41,7 +41,7 @@ def run(args):
         eos_token_id=tokenizer.eos_token_id,
     )
 
-    llm = HuggingFacePipeline(pipeline=pipeline, model_kwargs={'temperature': 1}, max_new_tokens=10)
+    llm = HuggingFacePipeline(pipeline=pipeline, model_kwargs={'temperature': 1})
 
     dataset = load_dataset('Multilingual-Perspectivist-NLU/EPIC', split='train')
     dataset = dataset.to_pandas()
