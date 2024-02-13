@@ -43,6 +43,17 @@ def run(args):
     )
 
     llm = HuggingFacePipeline(pipeline=pipeline, model_kwargs={'temperature': 1})
+    #todo remove after testing
+    output = llm.generate("""Irony is a literary or rhetorical device in which there is a discrepancy between what is said and what is meant, 
+        or between expectations and reality. It often involves a contrast between appearance and reality, 
+        or a situation in which the outcome is the opposite of what one might expect.
+        Imagine that you are a 29 years old person. Following is a message and its' reply from a conversation. 
+        
+        Message : Because the last generation was Gen. Z and there’s no where to go past that, so we gotta start from the beginning.
+        Reply   : but we should have just named the first generation "Alpha" instead of doing it now
+        
+        Do you find the above reply ironic? Answer Yes/No""")
+    print(output)
 
     dataset = load_dataset('Multilingual-Perspectivist-NLU/EPIC', split='train')
     dataset = dataset.to_pandas()
@@ -66,6 +77,7 @@ def run(args):
             dataset['Age'], dataset['Sex'], dataset['Ethnicity simplified'], dataset['Country of birth'],
             dataset['Country of residence'], dataset['Nationality'], dataset['Student status'],
             dataset['Employment status'], dataset['parent_text'], dataset['text']):
+        llm()
         results_map['age'].append(get_result(llm=llm, alias='age', attribute_value=age, message=message, reply=reply))
 
     dataset['age_results'] = results_map['age']
