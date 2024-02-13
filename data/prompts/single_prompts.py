@@ -7,7 +7,7 @@ string_templates = {
         Irony is a literary or rhetorical device in which there is a discrepancy between what is said and what is meant, 
         or between expectations and reality. It often involves a contrast between appearance and reality, 
         or a situation in which the outcome is the opposite of what one might expect.
-        Imagine that you are a person who's age between {age}. Following is a message and its' reply from a conversation. 
+        Imagine that you are {age} years old person. Following is a message and its' reply from a conversation. 
         
         Message : {message}
         Reply   : {reply}
