@@ -45,6 +45,7 @@ def run(args):
 
     dataset = load_dataset('Multilingual-Perspectivist-NLU/EPIC', split='train')
     dataset = dataset.to_pandas()
+    print('dataset loading finished')
 
     # todo remove after testing
     dataset = dataset[:10]
@@ -79,8 +80,9 @@ def run(args):
 
 
 if __name__ == '__main__':
-    #todo remove once tested
+    # todo remove once tested
     import os
+
     os.environ['HF_HOME'] = '../cache/'
     parser = argparse.ArgumentParser(description='''evaluate llms''')
     parser.add_argument('--model_name', type=str, required=True, help='model_name')
