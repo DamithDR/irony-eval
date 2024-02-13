@@ -34,10 +34,10 @@ def run(args):
         torch_dtype=torch.bfloat16,
         trust_remote_code=True,
         device_map="auto",
-        max_length=100,
+        max_length=200,
         do_sample=True,
         top_k=10,
-        num_return_sequences=10,
+        num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
     )
 
