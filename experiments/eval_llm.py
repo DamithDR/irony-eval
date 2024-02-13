@@ -3,9 +3,8 @@ import sys
 
 import pandas as pd
 import torch
-# from langchain import HuggingFacePipeline
+from langchain import HuggingFacePipeline
 # from langchain.llms.huggingface_pipeline import HuggingFacePipeline
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 
 from langchain import PromptTemplate, LLMChain
 from transformers import AutoTokenizer, pipeline, AutoModelForCausalLM
