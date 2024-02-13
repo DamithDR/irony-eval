@@ -31,12 +31,13 @@ def run(args):
         "text-generation",  # task
         model=args.model_name,
         tokenizer=tokenizer,
-        torch_dtype=torch.bfloat16,
+        torch_dtype="auto",
         trust_remote_code=True,
         device_map="auto",
-        max_length=200,
         do_sample=True,
-        top_k=10,
+        max_new_tokens=2,
+        top_k=1,
+        top_p=0.95,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
     )
