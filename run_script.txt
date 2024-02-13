@@ -1,1 +1,1 @@
-python -m experiments.eval_llm --model_name tiiuae/falcon-7b
+python -m experiments.eval_llm --model_name mistralai/Mistral-7B-v0.1

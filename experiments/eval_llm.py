@@ -16,6 +16,7 @@ def get_result(llm, alias, attribute_value, message, reply):
         prompt = templates[alias]
         llm_chain = LLMChain(prompt=prompt, llm=llm)
         response = llm_chain.invoke({alias: attribute_value, 'message': message, 'reply': reply})
+        print(f'response : {response}')
         if str(response).lower() == 'yes':
             return 'iro'
         else:
