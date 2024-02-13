@@ -14,7 +14,7 @@ def get_result(llm, alias, attribute_value, message, reply):
         return 'not'
     else:
         prompt = templates[alias]
-        llm_chain = LLMChain(prompt=prompt, llm=llm)
+        llm_chain = LLMChain(prompt=prompt, llm=llm, verbose=True)
         response = llm_chain.invoke({alias: attribute_value, 'message': message, 'reply': reply})
         print(f'response : {response}')
         if str(response).lower() == 'yes':
@@ -34,14 +34,14 @@ def run(args):
         torch_dtype=torch.bfloat16,
         trust_remote_code=True,
         device_map="auto",
-        max_length=10,
+        max_length=100,
         do_sample=True,
         top_k=10,
         num_return_sequences=10,
         eos_token_id=tokenizer.eos_token_id,
     )
 
-    llm = HuggingFacePipeline(pipeline=pipeline, model_kwargs={'temperature': 1, 'do_sample': True})
+    llm = HuggingFacePipeline(pipeline=pipeline, model_kwargs={'temperature': 1}, max_new_tokens=10)
 
     dataset = load_dataset('Multilingual-Perspectivist-NLU/EPIC', split='train')
     dataset = dataset.to_pandas()
