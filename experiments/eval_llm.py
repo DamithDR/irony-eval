@@ -4,7 +4,7 @@ import torch
 from datasets import load_dataset
 from langchain import LLMChain
 from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
-from transformers import AutoTokenizer, pipeline
+from transformers import AutoTokenizer
 
 from data.prompts.single_prompts import prompt_templates as templates
 
@@ -23,6 +23,7 @@ def get_result(llm, alias, attribute_value, message, reply):
 
 
 def run(args):
+    from transformers import pipeline
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
 
     pipeline = pipeline(
