@@ -4,7 +4,7 @@ import torch
 from datasets import load_dataset
 from langchain import LLMChain
 from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, pipeline
 
 from data.prompts.single_prompts import prompt_templates as templates
 
