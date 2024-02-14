@@ -3,6 +3,7 @@ from collections import deque
 
 from datasets import load_dataset
 from langchain import LLMChain
+from tqdm import tqdm
 from transformers import AutoTokenizer
 
 from data.prompts.single_prompts import prompt_templates as templates, string_templates
@@ -80,53 +81,56 @@ def generate_prompts(dataset):
 
 def reindex_results(results, dataset):
     print('results re-indexing...')
-    results_queue = deque(results)
-    results_map = {
-        'age': [],
-        'sex': [],
-        'ethnicity': [],
-        'country_of_birth': [],
-        'country_of_residence': [],
-        'nationality': [],
-        'is_student': [],
-        'employment_mode': [],
-    }
-    for age, sex, ethnicity, country_of_birth, country_of_residence, nationality, is_student, employment_mode in zip(
-            dataset['Age'], dataset['Sex'], dataset['Ethnicity simplified'], dataset['Country of birth'],
-            dataset['Country of residence'], dataset['Nationality'], dataset['Student status'],
-            dataset['Employment status']):
-        if age != 'DATA_EXPIRED':
-            results_map['age'].append(results_queue.popleft())
-        else:
-            results_map['age'].append('not')  # this is to handle DATA_EXPIRED case
-        if sex != 'DATA_EXPIRED':
-            results_map['sex'].append(results_queue.popleft())
-        else:
-            results_map['sex'].append('not')  # this is to handle DATA_EXPIRED case
-        if ethnicity != 'DATA_EXPIRED':
-            results_map['ethnicity'].append(results_queue.popleft())
-        else:
-            results_map['ethnicity'].append('not')  # this is to handle DATA_EXPIRED case
-        if country_of_birth != 'DATA_EXPIRED':
-            results_map['country_of_birth'].append(results_queue.popleft())
-        else:
-            results_map['country_of_birth'].append('not')  # this is to handle DATA_EXPIRED case
-        if country_of_residence != 'DATA_EXPIRED':
-            results_map['country_of_residence'].append(results_queue.popleft())
-        else:
-            results_map['country_of_residence'].append('not')  # this is to handle DATA_EXPIRED case
-        if nationality != 'DATA_EXPIRED':
-            results_map['nationality'].append(results_queue.popleft())
-        else:
-            results_map['nationality'].append('not')  # this is to handle DATA_EXPIRED case
-        if is_student != 'DATA_EXPIRED':
-            results_map['is_student'].append(results_queue.popleft())
-        else:
-            results_map['is_student'].append('not')  # this is to handle DATA_EXPIRED case
-        if employment_mode != 'DATA_EXPIRED':
-            results_map['employment_mode'].append(results_queue.popleft())
-        else:
-            results_map['employment_mode'].append('not')  # this is to handle DATA_EXPIRED case
+    with tqdm(total=len(dataset)) as pbar:
+        pbar.set_description('re-indexing results')
+        results_queue = deque(results)
+        results_map = {
+            'age': [],
+            'sex': [],
+            'ethnicity': [],
+            'country_of_birth': [],
+            'country_of_residence': [],
+            'nationality': [],
+            'is_student': [],
+            'employment_mode': [],
+        }
+        for age, sex, ethnicity, country_of_birth, country_of_residence, nationality, is_student, employment_mode in zip(
+                dataset['Age'], dataset['Sex'], dataset['Ethnicity simplified'], dataset['Country of birth'],
+                dataset['Country of residence'], dataset['Nationality'], dataset['Student status'],
+                dataset['Employment status']):
+            if age != 'DATA_EXPIRED':
+                results_map['age'].append(results_queue.popleft())
+            else:
+                results_map['age'].append('not')  # this is to handle DATA_EXPIRED case
+            if sex != 'DATA_EXPIRED':
+                results_map['sex'].append(results_queue.popleft())
+            else:
+                results_map['sex'].append('not')  # this is to handle DATA_EXPIRED case
+            if ethnicity != 'DATA_EXPIRED':
+                results_map['ethnicity'].append(results_queue.popleft())
+            else:
+                results_map['ethnicity'].append('not')  # this is to handle DATA_EXPIRED case
+            if country_of_birth != 'DATA_EXPIRED':
+                results_map['country_of_birth'].append(results_queue.popleft())
+            else:
+                results_map['country_of_birth'].append('not')  # this is to handle DATA_EXPIRED case
+            if country_of_residence != 'DATA_EXPIRED':
+                results_map['country_of_residence'].append(results_queue.popleft())
+            else:
+                results_map['country_of_residence'].append('not')  # this is to handle DATA_EXPIRED case
+            if nationality != 'DATA_EXPIRED':
+                results_map['nationality'].append(results_queue.popleft())
+            else:
+                results_map['nationality'].append('not')  # this is to handle DATA_EXPIRED case
+            if is_student != 'DATA_EXPIRED':
+                results_map['is_student'].append(results_queue.popleft())
+            else:
+                results_map['is_student'].append('not')  # this is to handle DATA_EXPIRED case
+            if employment_mode != 'DATA_EXPIRED':
+                results_map['employment_mode'].append(results_queue.popleft())
+            else:
+                results_map['employment_mode'].append('not')  # this is to handle DATA_EXPIRED case
+            pbar.update(1)
 
     dataset['age_results'] = results_map['age']
     dataset['sex_results'] = results_map['sex']
@@ -184,7 +188,6 @@ def run(args):
 
     print('predicting outputs...')
     results = pipe(prompt_set)
-    print(results)
 
     dataset = resolve_results(results, dataset)
     print(dataset)
