@@ -27,6 +27,7 @@ def get_result(llm, alias, attribute_value, message, reply):
 
 
 def generate_prompts(dataset):
+    print('generating prompts...')
     prompts_list = []
     for age, sex, ethnicity, country_of_birth, country_of_residence, nationality, is_student, employment_mode, message, reply in zip(
             dataset['Age'], dataset['Sex'], dataset['Ethnicity simplified'], dataset['Country of birth'],
@@ -81,6 +82,7 @@ def generate_prompts(dataset):
 
 
 def reindex_results(results, dataset):
+    print('results re-indexing...')
     results_queue = deque(results)
     results_map = {
         'age': [],
@@ -142,7 +144,7 @@ def reindex_results(results, dataset):
 
 
 def resolve_results(results, dataset):
-    print("Result:", results)
+    print('results resolving...')
     result_list = []
     for result in results:
         text = result[0]['generated_text']
@@ -167,6 +169,7 @@ def run(args):
         do_sample=True,
         max_new_tokens=1,
         top_k=1,
+        top_p=0.5,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
     )
@@ -177,11 +180,11 @@ def run(args):
     print('dataset loading finished')
 
     # todo remove after testing
-    dataset = dataset[:1]
+    dataset = dataset[:10]
 
     prompt_list = generate_prompts(dataset)
-    prompts_set = ListDataset(prompt_list)
 
+    print('predicting outputs...')
     results = pipe(prompt_list)
 
     dataset = resolve_results(results, dataset)
