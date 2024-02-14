@@ -1,4 +1,4 @@
-from datasets import Dataset
+from torch.utils.data import Dataset
 
 
 class ListDataset(Dataset):

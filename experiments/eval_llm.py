@@ -1,11 +1,8 @@
 import argparse
 from collections import deque
-from queue import Queue
 
-import torch
 from datasets import load_dataset
 from langchain import LLMChain
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 from transformers import AutoTokenizer
 
 from data.prompts.single_prompts import prompt_templates as templates, string_templates
@@ -180,12 +177,13 @@ def run(args):
     print('dataset loading finished')
 
     # todo remove after testing
-    dataset = dataset[:10]
+    dataset = dataset[:1]
 
     prompt_list = generate_prompts(dataset)
+    prompt_set = ListDataset(prompt_list)
 
     print('predicting outputs...')
-    results = pipe(prompt_list)
+    results = pipe(prompt_set)
 
     dataset = resolve_results(results, dataset)
     print(dataset)
