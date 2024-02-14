@@ -150,7 +150,7 @@ def resolve_results(results, dataset):
             result_list.append('iro')
         else:
             result_list.append('not')
-    return reindex_results(results=results, dataset=dataset)
+    return reindex_results(results=result_list, dataset=dataset)
 
 
 def run(args):
