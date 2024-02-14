@@ -1,4 +1,6 @@
 import argparse
+from collections import deque
+from queue import Queue
 
 import torch
 from datasets import load_dataset
@@ -49,11 +51,14 @@ def generate_prompts(dataset):
             prompts_list.append(prompt)
         if country_of_residence != 'DATA_EXPIRED':
             prompt = string_templates['country_of_residence']
-            prompt = prompt.replace('{country_of_residence}', country_of_residence).replace('{message}', message).replace('{reply}', reply)
+            prompt = prompt.replace('{country_of_residence}', country_of_residence).replace('{message}',
+                                                                                            message).replace('{reply}',
+                                                                                                             reply)
             prompts_list.append(prompt)
         if nationality != 'DATA_EXPIRED':
             prompt = string_templates['nationality']
-            prompt = prompt.replace('{nationality}', nationality).replace('{message}', message).replace('{reply}', reply)
+            prompt = prompt.replace('{nationality}', nationality).replace('{message}', message).replace('{reply}',
+                                                                                                        reply)
             prompts_list.append(prompt)
         if is_student != 'DATA_EXPIRED':
             prompt = string_templates['is_student']
@@ -61,14 +66,84 @@ def generate_prompts(dataset):
             prompts_list.append(prompt)
         if employment_mode != 'DATA_EXPIRED':
             prompt = string_templates['employment_mode']
-            prompt = prompt.replace('{employment_mode}', employment_mode).replace('{message}', message).replace('{reply}', reply)
+            prompt = prompt.replace('{employment_mode}', employment_mode).replace('{message}', message).replace(
+                '{reply}', reply)
             prompts_list.append(prompt)
 
     return prompts_list
 
 
-def resolve_results(results):
+def reindex_results(results, dataset):
+    results_queue = deque(results)
+    results_map = {
+        'age': [],
+        'sex': [],
+        'ethnicity': [],
+        'country_of_birth': [],
+        'country_of_residence': [],
+        'nationality': [],
+        'is_student': [],
+        'employment_mode': [],
+    }
+    for age, sex, ethnicity, country_of_birth, country_of_residence, nationality, is_student, employment_mode in zip(
+            dataset['Age'], dataset['Sex'], dataset['Ethnicity simplified'], dataset['Country of birth'],
+            dataset['Country of residence'], dataset['Nationality'], dataset['Student status'],
+            dataset['Employment status']):
+        if age != 'DATA_EXPIRED':
+            results_map['age'].append(results_queue.popleft())
+        else:
+            results_map['age'].append('not')  # this is to handle DATA_EXPIRED case
+        if sex != 'DATA_EXPIRED':
+            results_map['sex'].append(results_queue.popleft())
+        else:
+            results_map['sex'].append('not')  # this is to handle DATA_EXPIRED case
+        if ethnicity != 'DATA_EXPIRED':
+            results_map['ethnicity'].append(results_queue.popleft())
+        else:
+            results_map['ethnicity'].append('not')  # this is to handle DATA_EXPIRED case
+        if country_of_birth != 'DATA_EXPIRED':
+            results_map['country_of_birth'].append(results_queue.popleft())
+        else:
+            results_map['country_of_birth'].append('not')  # this is to handle DATA_EXPIRED case
+        if country_of_residence != 'DATA_EXPIRED':
+            results_map['country_of_residence'].append(results_queue.popleft())
+        else:
+            results_map['country_of_residence'].append('not')  # this is to handle DATA_EXPIRED case
+        if nationality != 'DATA_EXPIRED':
+            results_map['nationality'].append(results_queue.popleft())
+        else:
+            results_map['nationality'].append('not')  # this is to handle DATA_EXPIRED case
+        if is_student != 'DATA_EXPIRED':
+            results_map['is_student'].append(results_queue.popleft())
+        else:
+            results_map['is_student'].append('not')  # this is to handle DATA_EXPIRED case
+        if employment_mode != 'DATA_EXPIRED':
+            results_map['employment_mode'].append(results_queue.popleft())
+        else:
+            results_map['employment_mode'].append('not')  # this is to handle DATA_EXPIRED case
+
+    dataset['age_results'] = results_map['age']
+    dataset['sex_results'] = results_map['sex']
+    dataset['ethnicity_results'] = results_map['ethnicity']
+    dataset['country_of_birth_results'] = results_map['country_of_birth']
+    dataset['country_of_residence_results'] = results_map['country_of_residence']
+    dataset['nationality_results'] = results_map['nationality']
+    dataset['is_student_results'] = results_map['is_student']
+    dataset['employment_mode_results'] = results_map['employment_mode']
+
+    return dataset
+
+
+def resolve_results(results, dataset):
     print("Result:", results)
+    result_list = []
+    for result in results:
+        text = result[0]['generated_text']
+        if str(text).lower().startswith('yes'):
+            result_list.append('iro')
+        else:
+            result_list.append('not')
+    return reindex_results(results=results, dataset=dataset)
 
 
 def run(args):
@@ -83,9 +158,8 @@ def run(args):
         trust_remote_code=True,
         device_map="auto",
         do_sample=True,
-        max_new_tokens=2,
+        max_new_tokens=1,
         top_k=1,
-        top_p=0.95,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
     )
@@ -103,36 +177,10 @@ def run(args):
 
     results = pipe(prompt_list)
 
-    resolve_results(results)
+    dataset = resolve_results(results, dataset)
+    print(dataset)
+    dataset.to_csv('final_results.csv', index=False)
 
-    # results_map = {
-    #     'age': [],
-    #     'sex': [],
-    #     'ethnicity': [],
-    #     'country_of_birth': [],
-    #     'country_of_residence': [],
-    #     'nationality': [],
-    #     'is_student': [],
-    #     'employment_mode': [],
-    # }
-    #
-    # for age, sex, ethnicity, country_of_birth, country_of_residence, nationality, is_student, employment_mode, message, reply in zip(
-    #         dataset['Age'], dataset['Sex'], dataset['Ethnicity simplified'], dataset['Country of birth'],
-    #         dataset['Country of residence'], dataset['Nationality'], dataset['Student status'],
-    #         dataset['Employment status'], dataset['parent_text'], dataset['text']):
-    #     llm()
-    #     results_map['age'].append(get_result(llm=llm, alias='age', attribute_value=age, message=message, reply=reply))
-    #
-    # dataset['age_results'] = results_map['age']
-    # dataset['sex_results'] = results_map['sex']
-    # dataset['ethnicity_results'] = results_map['ethnicity']
-    # dataset['country_of_birth_results'] = results_map['country_of_birth']
-    # dataset['country_of_residence_results'] = results_map['country_of_residence']
-    # dataset['nationality_results'] = results_map['nationality']
-    # dataset['is_student_results'] = results_map['is_student']
-    # dataset['employment_mode_results'] = results_map['employment_mode']
-    #
-    # dataset.to_csv('final_results.csv', index=False)
 
 
 if __name__ == '__main__':
