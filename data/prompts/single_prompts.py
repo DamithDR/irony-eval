@@ -63,7 +63,7 @@ string_templates = {
         or between expectations and reality. It often involves a contrast between appearance and reality, 
         or a situation in which the outcome is the opposite of what one might expect.
 
-        Imagine that you are a residence in {country_of_residence}. Following is a message and its' reply from a conversation. 
+        Imagine that you are a resident in {country_of_residence}. Following is a message and its' reply from a conversation. 
 
         Message : {message}
         Reply   : {reply}
@@ -91,7 +91,7 @@ string_templates = {
         or between expectations and reality. It often involves a contrast between appearance and reality, 
         or a situation in which the outcome is the opposite of what one might expect.
 
-        Imagine that you are a {is_student}. Following is a message and its' reply from a conversation. 
+        Imagine that you are {is_student} student. Following is a message and its' reply from a conversation. 
 
         Message : {message}
         Reply   : {reply}

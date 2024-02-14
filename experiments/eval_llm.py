@@ -61,10 +61,17 @@ def generate_prompts(dataset):
                                                                                                         reply)
             prompts_list.append(prompt)
         if is_student != 'DATA_EXPIRED':
+            if str(is_student).lower() == 'yes':
+                is_student = 'a'
+            else:
+                is_student = 'not a'
             prompt = string_templates['is_student']
             prompt = prompt.replace('{is_student}', is_student).replace('{message}', message).replace('{reply}', reply)
             prompts_list.append(prompt)
         if employment_mode != 'DATA_EXPIRED':
+            if str(employment_mode).lower().startswith('unemployed') or str(employment_mode).lower().startswith(
+                    'not in paid work'):
+                employment_mode = 'not'
             prompt = string_templates['employment_mode']
             prompt = prompt.replace('{employment_mode}', employment_mode).replace('{message}', message).replace(
                 '{reply}', reply)
@@ -173,14 +180,13 @@ def run(args):
     dataset = dataset[:1]
 
     prompt_list = generate_prompts(dataset)
-    # prompts_set = ListDataset(prompt_list)
+    prompts_set = ListDataset(prompt_list)
 
     results = pipe(prompt_list)
 
     dataset = resolve_results(results, dataset)
     print(dataset)
     dataset.to_csv('final_results.csv', index=False)
-
 
 
 if __name__ == '__main__':
