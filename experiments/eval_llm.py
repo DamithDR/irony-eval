@@ -174,8 +174,8 @@ def run(args):
         top_p=0.5,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
-        pad_token_id=tokenizer.eos_token_id,
     )
+    pipe.tokenizer.pad_token_id = tokenizer.eos_token_id
 
     dataset = load_dataset('Multilingual-Perspectivist-NLU/EPIC', split='train')
     dataset = dataset.to_pandas()
