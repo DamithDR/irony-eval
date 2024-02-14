@@ -191,7 +191,6 @@ def run(args):
     results = pipe(prompt_set)
 
     dataset = resolve_results(results, dataset)
-    print(dataset)
     dataset.to_csv('final_results.csv', index=False)
 
 
