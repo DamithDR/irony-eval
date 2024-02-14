@@ -169,19 +169,20 @@ def run(args):
         device_map="auto",
         do_sample=True,
         max_new_tokens=1,
+        batch_size=args.batch_size,
         top_k=1,
         top_p=0.5,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
+        pad_token_id=tokenizer.eos_token_id,
     )
 
-    # llm = HuggingFacePipeline(pipeline=pipeline, model_kwargs={'temperature': 1})
     dataset = load_dataset('Multilingual-Perspectivist-NLU/EPIC', split='train')
     dataset = dataset.to_pandas()
     print('dataset loading finished')
 
-    # todo remove after testing
-    dataset = dataset[:1]
+    # testing
+    # dataset = dataset[:1]
 
     prompt_list = generate_prompts(dataset)
     prompt_set = ListDataset(prompt_list)
@@ -195,12 +196,9 @@ def run(args):
 
 
 if __name__ == '__main__':
-    # todo remove once tested
-    import os
-
-    os.environ['HF_HOME'] = '../cache/'
     parser = argparse.ArgumentParser(description='''evaluate llms''')
     parser.add_argument('--model_name', type=str, required=True, help='model_name')
+    parser.add_argument('--batch_size', type=int, required=False, default=64, help='batch_size')
 
     args = parser.parse_args()
     run(args)
