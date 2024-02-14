@@ -96,7 +96,7 @@ def run(args):
     print('dataset loading finished')
 
     # todo remove after testing
-    dataset = dataset[:10]
+    dataset = dataset[:1]
 
     prompt_list = generate_prompts(dataset)
     # prompts_set = ListDataset(prompt_list)
