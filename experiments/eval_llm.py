@@ -99,9 +99,9 @@ def run(args):
     dataset = dataset[:10]
 
     prompt_list = generate_prompts(dataset)
-    prompts_set = ListDataset(prompt_list)
+    # prompts_set = ListDataset(prompt_list)
 
-    results = pipe(prompts_set)
+    results = pipe(prompt_list)
 
     resolve_results(results)
 
