@@ -1,6 +1,7 @@
 import argparse
 from collections import deque
 
+import torch
 from datasets import load_dataset
 from langchain import LLMChain
 from tqdm import tqdm
@@ -159,7 +160,7 @@ def resolve_results(results, dataset):
 def run(args):
     from transformers import pipeline
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-
+    print("GPU found:", torch.cuda.is_available())
     pipe = pipeline(
         "text-generation",  # task
         model=args.model_name,
