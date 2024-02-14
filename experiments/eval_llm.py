@@ -184,6 +184,7 @@ def run(args):
 
     print('predicting outputs...')
     results = pipe(prompt_set)
+    print(results)
 
     dataset = resolve_results(results, dataset)
     print(dataset)
