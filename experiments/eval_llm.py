@@ -1,7 +1,6 @@
 import argparse
 from collections import deque
 
-import torch
 from datasets import load_dataset
 from langchain import LLMChain
 from tqdm import tqdm
