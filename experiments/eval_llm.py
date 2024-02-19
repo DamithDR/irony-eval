@@ -167,21 +167,22 @@ def run(args):
         trust_remote_code=True,
         device_map="auto",
         do_sample=True,
-        max_new_tokens=1,
+        max_new_tokens=2,
         batch_size=args.batch_size,
         top_k=1,
-        top_p=0.5,
+        top_p=0.95,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
+        pad_token_id=tokenizer.eos_token_id,
     )
-    pipe.tokenizer.pad_token_id = tokenizer.eos_token_id
+
 
     dataset = load_dataset('Multilingual-Perspectivist-NLU/EPIC', split='train')
     dataset = dataset.to_pandas()
     print('dataset loading finished')
 
     # testing
-    dataset = dataset[300:400]
+    dataset = dataset[300:305]
 
     prompt_list = generate_prompts(dataset)
     prompt_set = ListDataset(prompt_list)
