@@ -19,7 +19,7 @@ dataset = dataset[300:305]
 prompt_list = generate_prompts(dataset)
 
 generation_config = GenerationConfig(
-    max_new_tokens=2, do_sample=True, top_k=1, top_p=0.95, eos_token_id=model.config.eos_token_id,
+    max_new_tokens=2, do_sample=True, top_k=50, eos_token_id=model.config.eos_token_id,
     num_return_sequences=1
 )
 
