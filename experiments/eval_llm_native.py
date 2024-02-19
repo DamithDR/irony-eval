@@ -36,7 +36,7 @@ outputs = detach.tolist()
 out_list = []
 out_list.extend([tokenizer.decode(out, skip_special_tokens=True) for out in outputs])
 
-print([tokenizer.decode(out, skip_special_tokens=True) for out in outputs])
+# print([tokenizer.decode(out, skip_special_tokens=True) for out in outputs])
 
 with open('raw_results_from_model.txt', 'w') as f:
     f.writelines("\n".join(out_list))
