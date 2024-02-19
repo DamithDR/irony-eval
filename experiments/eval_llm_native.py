@@ -5,6 +5,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig
 from experiments.eval_llm import generate_prompts
 
 tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
+tokenizer.pad_token = tokenizer.eos_token
+tokenizer.padding_side = "left"
+
 model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-v0.1")
 
 dataset = load_dataset('Multilingual-Perspectivist-NLU/EPIC', split='train')
