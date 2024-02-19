@@ -38,5 +38,5 @@ while True:
     question = input("User Input : ")
     if 'quit'.__eq__(question):
         sys.exit(0)
-    response = llm_chain.run(question)
+    response = llm_chain.invoke(question)
     print(response)
