@@ -144,15 +144,22 @@ def reindex_results(results, dataset):
     return dataset
 
 
-def resolve_results(results, dataset):
+def resolve_results(results, dataset, model_name):
     print('results resolving...')
     result_list = []
     for result in results:
         text = result[0]['generated_text']
-        if str(text).lower().startswith('yes'):
-            result_list.append('iro')
+        if model_name.startswith('mistral'):
+            split = str(text).lower().split('[/INST]')
+            if len(split) > 1 & split[1].startswith('yes'):
+                result_list.append('iro')
+            else:
+                result_list.append('not')
         else:
-            result_list.append('not')
+            if str(text).lower().startswith('yes'):
+                result_list.append('iro')
+            else:
+                result_list.append('not')
     return reindex_results(results=result_list, dataset=dataset)
 
 
@@ -171,13 +178,12 @@ def run(args):
         do_sample=True,
         max_new_tokens=2,
         batch_size=args.batch_size,
-        top_k=1,
-        top_p=0.95,
+        top_k=2,
         num_return_sequences=1,
+        temperature=0.2,
         eos_token_id=tokenizer.eos_token_id,
         # pad_token_id=tokenizer.eos_token_id,
     )
-
 
     dataset = load_dataset('Multilingual-Perspectivist-NLU/EPIC', split='train')
     dataset = dataset.to_pandas()
@@ -187,6 +193,10 @@ def run(args):
     dataset = dataset[300:305]
 
     prompt_list = generate_prompts(dataset)
+
+    if str(args.model_name).startswith('mistralai'):
+        prompt_list = [f'<s>[INST] {prompt} [/INST]' for prompt in prompt_list]
+
     prompt_set = ListDataset(prompt_list)
 
     print('predicting outputs...')
@@ -198,7 +208,7 @@ def run(args):
     with open('raw_results.txt', 'w') as f:
         f.writelines("\n".join(print_results))
 
-    dataset = resolve_results(results, dataset)
+    dataset = resolve_results(results, dataset, args.model_name)
     dataset.to_csv('final_results.csv', index=False)
 
 
