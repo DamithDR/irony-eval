@@ -20,9 +20,9 @@ dataset = dataset[300:302]
 prompt_list = generate_prompts(dataset)
 
 generation_config = GenerationConfig(
-    max_new_tokens=2, do_sample=True, top_k=50, eos_token_id=model.config.eos_token_id,
+    max_new_tokens=50, do_sample=True, top_k=50, eos_token_id=model.config.eos_token_id,
     pad_token_id=model.config.eos_token_id, temperature=0.2,
-    num_return_sequences=1,torch_dtype=torch.bfloat16,
+    num_return_sequences=10,torch_dtype=torch.bfloat16,
 )
 
 encoding = tokenizer(prompt_list, padding=True, truncation=False, return_tensors="pt").to(model.device)
