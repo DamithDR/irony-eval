@@ -181,13 +181,19 @@ def run(args):
     print('dataset loading finished')
 
     # testing
-    # dataset = dataset[:1]
+    dataset = dataset[300:400]
 
     prompt_list = generate_prompts(dataset)
     prompt_set = ListDataset(prompt_list)
 
     print('predicting outputs...')
     results = pipe(prompt_set)
+
+    # testing
+    print_results = [result[0]['generated_text'] for result in results]
+
+    with open('raw_results.txt', 'w') as f:
+        f.writelines("\n".join(print_results))
 
     dataset = resolve_results(results, dataset)
     dataset.to_csv('final_results.csv', index=False)
