@@ -173,7 +173,7 @@ def run(args):
         top_p=0.95,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
-        pad_token_id=tokenizer.eos_token_id,
+        # pad_token_id=tokenizer.eos_token_id,
     )
 
 
