@@ -159,6 +159,8 @@ def resolve_results(results, dataset):
 def run(args):
     from transformers import pipeline
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+    tokenizer.pad_token = "[PAD]"
+    tokenizer.padding_side = "left"
     pipe = pipeline(
         "text-generation",  # task
         model=args.model_name,
